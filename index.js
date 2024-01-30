@@ -1,6 +1,8 @@
 const express = require("express");
 const app = express();
 
+app.use(express.json())
+
 let phonebook = [
   {
     id: 1,
@@ -42,17 +44,38 @@ app.get("/api/persons/:id", (req, res) => {
 });
 
 app.delete("/api/persons/:id", (req, res) => {
-    const id = Number(req.params.id);
-    console.log('before', phonebook)
-    phonebook = phonebook.filter(person => person.id !== id)
-    console.log('after', phonebook)
+  const id = Number(req.params.id);
+  console.log("before", phonebook);
+  phonebook = phonebook.filter((person) => person.id !== id);
+  console.log("after", phonebook);
 
-    res.status(204).end()
-})
+  res.status(204).end();
+});
 
 const genId = () => {
-    return Math.ceil(Math.random() * 10000000)
-}
+  return Math.ceil(Math.random() * 10000000);
+};
+
+app.post("/api/persons", (req, res) => {
+  const body = req.body;
+  console.log(body)
+
+  if (!body.name || !body.number) {
+    return res.status(400).json({
+      error: "content missing",
+    });
+  }
+
+  const person = {
+    name: body.name,
+    number: body.number,
+    id: genId(),
+  };
+
+  phonebook = phonebook.concat(person)
+
+  res.json(person)
+});
 
 const PORT = 3001;
 app.listen(PORT, () => {
