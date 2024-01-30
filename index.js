@@ -64,6 +64,10 @@ app.post("/api/persons", (req, res) => {
     return res.status(400).json({
       error: "content missing",
     });
+  } else if (phonebook.some(person => person.name == body.name)) {
+    return res.status(400).json({
+      error: "duplicate name"
+    })
   }
 
   const person = {
